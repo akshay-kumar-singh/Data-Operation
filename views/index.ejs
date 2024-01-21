@@ -1,0 +1,121 @@
+<!-- views/index.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complex Form</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Add or modify styles as needed */
+
+        .password-strength {
+            margin-top: 8px;
+            font-size: 0.8em;
+            color: #6c757d;
+        }
+
+        .invalid-feedback {
+            display: none;
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="form-container">
+        <h1>Complex Form</h1>
+        <div class="row">
+            <div class="col-md-6">
+                <form action="/submit" method="post" onsubmit="return validateForm()">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" required>
+                    <br>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                    <div class="password-strength" id="password-strength"></div>
+                    <div class="invalid-feedback" id="password-feedback"></div>
+                    <br>
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="result-container" style="display: none;">
+        <h2>Submission Result</h2>
+        <div id="result-content"></div>
+    </div>
+
+    <script>
+        // Add inline JavaScript for enhanced client-side validation and dynamic updates
+        function validateForm() {
+            var username = document.getElementById('username').value;
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+
+            // Enhanced password strength validation
+            var passwordStrength = calculatePasswordStrength(password);
+            document.getElementById('password-strength').innerText = `Password Strength: ${passwordStrength}`;
+
+            if (passwordStrength < 3) {
+                document.getElementById('password-feedback').innerText = 'Password is too weak';
+                document.getElementById('password-feedback').style.display = 'block';
+                return false;
+            } else {
+                document.getElementById('password-feedback').style.display = 'none';
+            }
+
+            // Add more validation rules as needed
+
+            return true;
+        }
+
+        function calculatePasswordStrength(password) {
+            // Simple password strength calculation logic
+            var strength = 0;
+            if (password.length >= 8) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/\d/.test(password)) strength++;
+            if (/[\W_]/.test(password)) strength++;
+            return strength;
+        }
+    </script>
+
+    <!-- Include Bootstrap JS and jQuery (optional, for Bootstrap features) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://unpkg.com/page/page.js"></script>
+    
+    <script>
+        page('/', function () {
+            // Home route - show the form
+            document.getElementById('form-container').style.display = 'block';
+            document.getElementById('result-container').style.display = 'none';
+        });
+    
+        page('/submit', function () {
+            // Submission route - hide the form and show the result
+            document.getElementById('form-container').style.display = 'none';
+            document.getElementById('result-container').style.display = 'block';
+        });
+    
+        page();
+
+        function showSubmissionResult(data) {
+            document.getElementById('result-content').innerHTML = `
+                <p>Username: ${data.username}</p>
+                <p>Email: ${data.email}</p>
+                <p>Password: ${data.password}</p>
+            `;
+        }
+    </script>
+</body>
+</html>
+
+
